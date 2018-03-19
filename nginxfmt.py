@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """This Python script formats nginx configuration files in consistent way.
@@ -15,7 +15,7 @@ __author__ = "Michał Słomkowski"
 __license__ = "Apache 2.0"
 __version__ = "1.0.2"
 
-INDENTATION = ' ' * 4
+INDENTATION = ' ' * 2
 
 TEMPLATE_VARIABLE_OPENING_TAG = '___TEMPLATE_VARIABLE_OPENING_TAG___'
 TEMPLATE_VARIABLE_CLOSING_TAG = '___TEMPLATE_VARIABLE_CLOSING_TAG___'
@@ -25,6 +25,7 @@ def strip_line(single_line):
     """Strips the line and replaces neighbouring whitespaces with single space (except when within quotation marks)."""
     single_line = single_line.strip()
     if single_line.startswith('#'):
+        single_line = ""
         return single_line
 
     within_quotes = False
@@ -38,7 +39,7 @@ def strip_line(single_line):
     return '"'.join(parts)
 
 
-def apply_variable_template_tags(line: str) -> str:
+def apply_variable_template_tags(line):
     """Replaces variable indicators ${ and } with tags, so subsequent formatting is easier."""
     return re.sub(r'\${\s*(\w+)\s*}',
                   TEMPLATE_VARIABLE_OPENING_TAG + r"\1" + TEMPLATE_VARIABLE_CLOSING_TAG,
@@ -46,7 +47,7 @@ def apply_variable_template_tags(line: str) -> str:
                   flags=re.UNICODE)
 
 
-def strip_variable_template_tags(line: str) -> str:
+def strip_variable_template_tags(line):
     """Replaces tags back with ${ and } respectively."""
     return re.sub(TEMPLATE_VARIABLE_OPENING_TAG + r'\s*(\w+)\s*' + TEMPLATE_VARIABLE_CLOSING_TAG,
                   r'${\1}',
@@ -54,7 +55,7 @@ def strip_variable_template_tags(line: str) -> str:
                   flags=re.UNICODE)
 
 
-def clean_lines(orig_lines) -> list:
+def clean_lines(orig_lines):
     """Strips the lines and splits them if they contain curly brackets."""
     cleaned_lines = []
     for line in orig_lines:
